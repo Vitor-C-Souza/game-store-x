@@ -20,42 +20,41 @@ public class CategoriaController {
     private CategoriaRepository repository;
 
     @PostMapping
-    public ResponseEntity<Categoria> create(@RequestBody @Valid Categoria categoria, UriComponentsBuilder uri){
+    public ResponseEntity<Categoria> create(@RequestBody @Valid Categoria categoria, UriComponentsBuilder uri) {
         repository.save(categoria);
-        URI address = uri.path("categorias/{id}").buildAndExpand(categoria.getId()).toUri();
+        URI address = uri.path("/categorias/{id}").buildAndExpand(categoria.getId()).toUri();
         return ResponseEntity.created(address).body(categoria);
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> findAll(){
+    public ResponseEntity<List<Categoria>> findAll() {
         List<Categoria> categorias = repository.findAll();
         return ResponseEntity.ok(categorias);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> GetById(@PathVariable Long id){
+    public ResponseEntity<Categoria> GetById(@PathVariable Long id) {
         Categoria categoria = repository.findById(id).orElseThrow(NoSuchElementException::new);
 
         return ResponseEntity.ok(categoria);
     }
 
     @GetMapping("/pesquisar")
-    public ResponseEntity<List<Categoria>> GetByNome(@RequestParam String nome){
+    public ResponseEntity<List<Categoria>> GetByNome(@RequestParam String nome) {
         List<Categoria> categorias = repository.findAllByNomeContainingIgnoreCase(nome);
 
         return ResponseEntity.ok(categorias);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> put(@PathVariable Long id, @RequestBody @Valid Categoria categoria){
+    public ResponseEntity<Categoria> put(@PathVariable Long id, @RequestBody @Valid Categoria categoria) {
         Categoria reference = repository.getReferenceById(id);
         reference.update(categoria);
-        repository.save(reference);
-        return ResponseEntity.ok(reference);
+        return ResponseEntity.ok(repository.save(reference));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean exists = repository.existsById(id);
 
         if (!exists) {
